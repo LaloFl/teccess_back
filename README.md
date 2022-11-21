@@ -10,6 +10,7 @@
 - n_control (string)
 - carrera (string)
 - campus (string)
+- ultimo_log (datetime)
 - telefono (string)
 - curp (string)
 - t_sangre (string)
