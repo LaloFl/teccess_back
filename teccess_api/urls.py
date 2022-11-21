@@ -22,5 +22,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/estudiantes/', estudiantes_list),
     path('api/estudiantes/<int:pk>/', estudiantes_detail),
+
+    path('api/logs/', logs_list),
+    path('api/logs/<int:pk>/', logs_detail),
+    path('api/logs_from/<int:pk>/', logs_estudiante),
     
 ]

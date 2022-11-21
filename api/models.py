@@ -18,4 +18,16 @@ class Estudiantes(models.Model):
     remark = models.CharField(max_length=50)
 
     foto = models.BinaryField(max_length=10_000)
+
+class Logs(models.Model):
+    id_log = models.AutoField(primary_key=True)
+    id_estudiante = models.ForeignKey(Estudiantes, on_delete=models.CASCADE)
+
+    tipo = models.CharField(max_length=50)
     
+    fecha = models.DateField(auto_now_add=True)
+    hora = models.TimeField(auto_now_add=True)
+    fecha_hora = models.DateTimeField(auto_now_add=True)
+    dia_semana = models.CharField(max_length=50)
+
+    remark = models.CharField(max_length=50)
