@@ -6,8 +6,8 @@ from rest_framework import status
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
 
-from .models import Estudiantes, Logs
-from .serializers import EstudiantesSerializer, LogsSerializer
+from .models import *
+from .serializers import *
 
 
 # Create your views here.
@@ -108,6 +108,24 @@ def logs_estudiante(request, pk):
         now_hour = now_date.strftime("%H:%M:%S")
         now_date = now_date.strftime("%Y-%m-%d")
 
+        # GET NUMBER OF DAY OF THE WEEK
+        day_of_week = datetime.datetime.today().weekday()
+        if day_of_week == 0:
+            day_of_week = "Lunes"
+        elif day_of_week == 1:
+            day_of_week = "Martes"
+        elif day_of_week == 2:
+            day_of_week = "Miércoles"
+        elif day_of_week == 3:
+            day_of_week = "Jueves"
+        elif day_of_week == 4:
+            day_of_week = "Viernes"
+        elif day_of_week == 5:
+            day_of_week = "Sábado"
+        elif day_of_week == 6:
+            day_of_week = "Domingo"
+        logs_data["dia_semana"] = day_of_week
+
         print(now_date, now_hour)
 
         # CHECK IF LAST LOG IS FROM THE SAME DAY
@@ -125,8 +143,8 @@ def logs_estudiante(request, pk):
                     logs_data["tipo"] = "IN"
                 else:
                     logs_data["tipo"] = "OUT"
-        else:
-            logs_data["tipo"] = "IN"
+            else:
+                logs_data["tipo"] = "IN"
 
         logs_serializer = LogsSerializer(data=logs_data)
         if logs_serializer.is_valid():
