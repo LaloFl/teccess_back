@@ -51,6 +51,30 @@ def estudiantes_detail(request, pk):
         return JsonResponse({'message': 'Estudiante was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
 
 @csrf_exempt
+def estudiantes_rfid(request, rfid):
+    try:
+        estudiantes = Estudiantes.objects.get(rfid=rfid)
+    except Estudiantes.DoesNotExist:
+        return JsonResponse({'message': 'The Estudiante does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        estudiantes_serializer = EstudiantesSerializer(estudiantes)
+        return JsonResponse(estudiantes_serializer.data)
+
+    elif request.method == 'PUT':
+        estudiantes_data = JSONParser().parse(request)
+        estudiantes_serializer = EstudiantesSerializer(estudiantes, data=estudiantes_data)
+        if estudiantes_serializer.is_valid():
+            estudiantes_serializer.save()
+            return JsonResponse(estudiantes_serializer.data)
+        return JsonResponse(estudiantes_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        estudiantes.delete()
+        return JsonResponse({'message': 'Estudiante was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+
+
+@csrf_exempt
 def logs_list(request):
     if request.method == 'GET':
         # GET ONLY LAST 500 LOGS
@@ -137,7 +161,7 @@ def logs_estudiante(request, pk):
                 log_total_minutes = int(last_log_serializer.data[0]["hora"].split(":")[0]) * 60 + int(last_log_serializer.data[0]["hora"].split(":")[1])
                 today_total_minutes = int(now_hour[0:2]) * 60 + int(now_hour[3:5])
                 if log_total_minutes > today_total_minutes - 1:
-                    return JsonResponse({'message': '¡Demasiado rápido!, espera al menos 1 minuto'}, status=status.HTTP_400_BAD_REQUEST)
+                    return JsonResponse({'status': 'NG','message': '¡Demasiado rápido!, espera al menos 1 minuto'}, status=status.HTTP_400_BAD_REQUEST)
                 # CHECK IF LAST LOG IS IN OR OUT
                 if last_log_serializer.data[0]["tipo"] == "OUT":
                     logs_data["tipo"] = "IN"
@@ -149,5 +173,10 @@ def logs_estudiante(request, pk):
         logs_serializer = LogsSerializer(data=logs_data)
         if logs_serializer.is_valid():
             logs_serializer.save()
-            return JsonResponse(logs_serializer.data, status=status.HTTP_201_CREATED)
+            # EDIT ultimo_log FROM ESTUDIANTE
+            estudiante = Estudiantes.objects.get(pk=pk)
+            estudiante_serializer = EstudiantesSerializer(estudiante, data={"ultimo_log": now_date})
+            if estudiante_serializer.is_valid():
+                estudiante_serializer.save()
+            return JsonResponse({'status': 'OK', 'data': logs_serializer.data}, status=status.HTTP_201_CREATED)
         return JsonResponse(logs_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

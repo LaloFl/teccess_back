@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/estudiantes/', estudiantes_list),
     path('api/estudiantes/<int:pk>/', estudiantes_detail),
+    path('api/estudiantes_rfid/<str:rfid>/', estudiantes_rfid),
 
     path('api/logs/', logs_list),
     path('api/logs/<int:pk>/', logs_detail),

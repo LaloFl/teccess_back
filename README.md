@@ -8,6 +8,7 @@
 - nombre (string)
 - apellidos (string)
 - n_control (string)
+- rfid
 - carrera (string)
 - campus (string)
 - ultimo_log (datetime)
